@@ -75,6 +75,18 @@ class BookFavorite(unittest.TestCase):
       sleep(3)
       with self.assertRaises(NoSuchElementException):
         self.driver.find_element(By.CLASS_NAME,"book")
+      sleep(0.2)
+
+
+    def test_zlEAVE_A_COMMENT(self):
+      print("LEAVE_A_COMMENT")
+      self.driver.get("http://localhost:3000/?page=1")
+      sleep(1)
+      self.driver.find_element(By.CLASS_NAME, "book__title").click()
+      sleep(0.2)
+      self.driver.find_element(By.CLASS_NAME,"textarea").send_keys(rand.generate_random_wrong_email(80))
+      self.driver.find_element(By.CSS_SELECTOR, "form [type=submit]").click()
+      sleep(2)
 
 
     def tearDown(self):
