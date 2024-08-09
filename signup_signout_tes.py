@@ -201,6 +201,7 @@ class Registration(unittest.TestCase):
     usrErr = self.driver.find_element(By.CLASS_NAME,"error")
     self.assertEqual(usrErr.text,"Both passwords need to be the same")
 
+    #Проверка сохранения данных в полях после перезагрузки страницы с формой
 
   def test_bad_registration_reload_page_wData(self):
     print("bad_registration_reload_page_wData")
