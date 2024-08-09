@@ -9,14 +9,6 @@ import rand
 from selenium.common.exceptions import NoSuchElementException
 
 
-
-def getFormElements(self):
-  email_field = driver.find_element(By.NAME, "email") 
-  pass_field = driver.find_element(By.NAME, "password")
-  submit_btn = driver.find_element(By.CSS_SELECTOR, "form [type=submit]")
-  sleep(0.5)
-  return email_field, pass_field, submit_btn
-
 driver = webdriver.Chrome()
 
 print("#################Тест-Сьют 1: Проверка формы 'Sign In'#################")
@@ -47,11 +39,16 @@ class Authorization(unittest.TestCase):
 
 
   # Сетап сайта и подвязка переменных к соответсвующим формам
+  @classmethod
+  def setUpClass(self):
+    print('set all this staff ========================= \n')
+    self.driver = driver
+    self.driver.get('http://localhost:3000/signin')    
+    
 
   def setUp(self):
     print('\n\nsetup')
-    self.driver = driver
-    self.driver.get('http://localhost:3000/signin')
+    self.driver.get('http://localhost:3000/signin') 
     sleep(0.5)
     self._prepare_form_fields()
 
@@ -79,7 +76,8 @@ class Authorization(unittest.TestCase):
 
   def test_badAuth_eMail_notExist(self):
     print('test_badAuth_eMail_notExist')
-    self._fill_form_fields(rand.generate_random_email(5),"180175Ilya")
+    generated_email = rand.generate_random_email(5)
+    self._fill_form_fields(generated_email,"180175Ilya")
     self.submit_btn.click()
     sleep(0.5)
     usrErr = self.driver.find_element(By.CLASS_NAME,"error")
