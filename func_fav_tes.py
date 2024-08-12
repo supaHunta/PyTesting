@@ -45,12 +45,12 @@ class BookFavorite(unittest.TestCase):
     def setUpClass(self):
       print('set all this staff ========================= \n')
       self.driver = driver
-      self.driver.get('http://localhost:3000/signin') 
+      self.driver.get('http://localhost:3000/signin')
 
 
     def setUp(self):
      print('\n\nsetup')
-     self.driver.get('http://localhost:3000/signin')
+     
      
 
     def test_adding_a_Favorite_book(self):
