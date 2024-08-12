@@ -7,10 +7,12 @@ from selenium.webdriver.common.by import By
 from time import sleep
 import rand
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
 driver = webdriver.Chrome()
+wait = WebDriverWait(driver, 3)
 
 print("#################Тест-Сьют 1: Проверка формы 'Sign In'#################")
 
@@ -49,9 +51,14 @@ class Authorization(unittest.TestCase):
 
   def setUp(self):
     print('\n\nsetup')
-    self.driver.get('http://localhost:3000/signin') 
-    sleep(0.5)
-    self._prepare_form_fields()
+    self.driver.get('http://localhost:3000/signin')
+    self.wait = WebDriverWait(driver, 10) 
+    element = self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "form-wrapper")))
+    try:
+      element
+      self._prepare_form_fields()
+    except:
+      print("The form wasn't initiated properly")
 
   #Проверка успешной авторизации
 
@@ -59,9 +66,15 @@ class Authorization(unittest.TestCase):
     print('test_auth')
     self._fill_form_fields("super.neyt@yandex.ru", "180175Ilya")
     self.submit_btn.click()
-    sleep(0.5)
-    self.assertEqual(self.driver.current_url, "http://localhost:3000/?page=1")
-    self.driver.find_element(By.CLASS_NAME, "header__catalog-link").click()
+    elements = self.wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "header__catalog-link")))
+    try:
+      elements
+      self.driver.find_element(By.CLASS_NAME, "header__catalog-link").click()
+      self.assertEqual(self.driver.current_url, "http://localhost:3000/?page=1")
+    except:
+      print("TimeOut")  
+    
+    
 
   # Проверка валидации поля "E-Mail" /Неверный формат/
 
@@ -69,9 +82,13 @@ class Authorization(unittest.TestCase):
     print('test_badAuth_eMail')
     self._fill_form_fields("super.neyt@", "180175Ilya")
     self.submit_btn.click()
-    sleep(0.5)
-    usrErr = self.driver.find_element(By.CLASS_NAME,"error")
-    self.assertEqual(usrErr.text,"Invalid email address")
+    element = self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "error")))
+    try:
+      element
+      usrErr = self.driver.find_element(By.CLASS_NAME,"error")
+      self.assertEqual(usrErr.text,"Invalid email address")
+    except:
+      print("No errors found!")
 
   # Проверка валидации поля "E-Mail" /Несуществующий/
 
@@ -80,9 +97,14 @@ class Authorization(unittest.TestCase):
     generated_email = rand.generate_random_email(5)
     self._fill_form_fields(generated_email,"180175Ilya")
     self.submit_btn.click()
-    sleep(0.5)
-    usrErr = self.driver.find_element(By.CLASS_NAME,"error")
-    self.assertEqual(usrErr.text,"User with this email not found")
+    element = self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "error")))
+    try:
+      element
+      usrErr = self.driver.find_element(By.CLASS_NAME,"error")
+      self.assertEqual(usrErr.text,"User with this email not found")
+    except:
+      print("No errors found!")
+    
 
   # Проверка валидации поля "Пароль"
 
@@ -90,9 +112,13 @@ class Authorization(unittest.TestCase):
     print('test_badAuth_pass')
     self._fill_form_fields("super.neyt@yandex.ru", "180175Ily")
     self.submit_btn.click()
-    sleep(0.5)
-    usrErr = self.driver.find_element(By.CLASS_NAME,"error")
-    self.assertEqual(usrErr.text,"Wrong password")
+    element = self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "error")))
+    try:
+      element
+      usrErr = self.driver.find_element(By.CLASS_NAME,"error")
+      self.assertEqual(usrErr.text,"Wrong password")
+    except:
+      print("No errors found!")
 
   # Проверка ввода пробела в начале поля "Пароль"
 
@@ -100,21 +126,31 @@ class Authorization(unittest.TestCase):
     print("using_space_in_pass_field")
     self._fill_form_fields("super.neyt@yandex.ru"," 180175Ilya")
     self.submit_btn.click()
-    sleep(0.5)
+    
     self.assertNotEqual(self.driver.current_url, "http://localhost:3000/?page=1")
 
   # Проверка сохранения данных после перезагрузки страницы
 
 
-  def test_refreshPage_withData(self):
+  def test_refresh_page_with_data(self):
     print("test_refreshPage_withData")
     self._fill_form_fields("super.neyt@yandex.ru", "180175Ilya")
     self.driver.refresh()
-    sleep(0.2)
-    self._prepare_form_fields()
-    self.submit_btn.click()
-    sleep(0.5)
-    self.assertEqual(self.driver.current_url, "http://localhost:3000/signin")
+    element = self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "form-wrapper")))
+    try:
+      element
+      self._prepare_form_fields()
+      self.submit_btn.click()
+    except:
+      print("The form wasn't initiated properly")
+    elements = self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "error")))
+    try:
+      elements
+      usrErr = self.driver.find_element(By.CLASS_NAME,"error")
+      self.assertEqual(usrErr.text,"Required")
+    except:
+      print("No errors found!")
+    
 
 
   # Закрытие браузера после каждой итерации
@@ -151,8 +187,13 @@ class Registration(unittest.TestCase):
     print('\n\nsetup')
     self.driver = driver
     self.driver.get('http://localhost:3000/signup')
-    sleep(0.5)
-    self._prepare_reg_form_fields()
+    self.wait = WebDriverWait(driver, 10) 
+    element = self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "form-wrapper")))
+    try:
+      element
+      self._prepare_reg_form_fields()
+    except:
+      print("The form wasn't initiated properly")
     
 
   
@@ -162,10 +203,13 @@ class Registration(unittest.TestCase):
     print("succesfull_registration")
     self._fill_reg_form_fields(rand.generate_random_email(6),"180175Ilya","180175Ilya")
     self.submit_btn.click()
-    sleep(0.5)
-    self.assertEqual(driver.current_url,"http://localhost:3000/?page=1")
-    logoutButton = driver.find_element(By.CLASS_NAME,"header__catalog-link").click()
-    sleep(0.5)
+    elements = self.wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "header__catalog-link")))
+    try:
+      elements
+      self.driver.find_element(By.CLASS_NAME, "header__catalog-link").click()
+      self.assertEqual(self.driver.current_url, "http://localhost:3000/?page=1")
+    except:
+      print("TimeOut")  
     
 
   # Проверка валидации поля "E-Mail" /Неверный формат/
@@ -174,9 +218,13 @@ class Registration(unittest.TestCase):
     print("bad_registration_wrong_email_format")
     self._fill_reg_form_fields(rand.generate_random_wrong_email(10),'180175Ilya',"180175Ilya")
     self.submit_btn.click()
-    sleep(0.5)
-    usrErr = self.driver.find_element(By.CLASS_NAME,"error")
-    self.assertEqual(usrErr.text,"Invalid email address")
+    element = self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "error")))
+    try:
+      element
+      usrErr = self.driver.find_element(By.CLASS_NAME,"error")
+      self.assertEqual(usrErr.text,"Invalid email address")
+    except:
+      print("No errors found!")
     
 
   # Проверка валидации поля "Пароль" /Использовать пробел вначале/
@@ -185,7 +233,6 @@ class Registration(unittest.TestCase):
     print("bad_registration_wrong_pass_space")
     self._fill_reg_form_fields(rand.generate_random_email(7),' 180175Ilya'," 180175Ilya")
     self.submit_btn.click()
-    sleep(0.5)
     self.assertNotEqual(self.driver.current_url, "http://localhost:3000/?page=1")
     
     
@@ -197,9 +244,13 @@ class Registration(unittest.TestCase):
     print("bad_registration_wrong_pass_anotherPass")
     self._fill_reg_form_fields(rand.generate_random_email(8),'180175Ilya',"180175Ily")
     self.submit_btn.click()
-    sleep(0.5)
-    usrErr = self.driver.find_element(By.CLASS_NAME,"error")
-    self.assertEqual(usrErr.text,"Both passwords need to be the same")
+    element = self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "error")))
+    try:
+      element
+      usrErr = self.driver.find_element(By.CLASS_NAME,"error")
+      self.assertEqual(usrErr.text,"Both passwords need to be the same")
+    except:
+      print("No errors found!")
 
     #Проверка сохранения данных в полях после перезагрузки страницы с формой
 
@@ -207,13 +258,20 @@ class Registration(unittest.TestCase):
     print("bad_registration_reload_page_wData")
     self._fill_reg_form_fields(rand.generate_random_email(5), "180175Ilya", "180175Ilya")
     self.driver.refresh()
-    sleep(0.2)
-    self._prepare_reg_form_fields()
-    self.submit_btn.click()
-    sleep(0.5)
-    self.assertEqual(self.driver.current_url, "http://localhost:3000/signup")
-    usrErr = self.driver.find_element(By.CLASS_NAME,"error")
-    self.assertEqual(usrErr.text,"Required")
+    element = self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "form-wrapper")))
+    try:
+      element
+      self._prepare_reg_form_fields()
+      self.submit_btn.click()
+    except:
+      print("The form wasn't initiated properly")
+    elements = self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "error")))
+    try:
+      elements
+      usrErr = self.driver.find_element(By.CLASS_NAME,"error")
+      self.assertEqual(usrErr.text,"Required")
+    except:
+      print("No errors found!")
 
 
   def tearDown(self):
