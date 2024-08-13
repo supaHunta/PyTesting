@@ -44,7 +44,7 @@ class Authorization(unittest.TestCase):
   # Сетап сайта и подвязка переменных к соответсвующим формам
   @classmethod
   def setUpClass(self):
-    print('set all this staff ========================= \n')
+    print('Тест-Сьют №1: Авторизация \n')
     self.driver = driver
     self.driver.get('http://localhost:3000/signin')    
     
@@ -148,7 +148,7 @@ class Authorization(unittest.TestCase):
   # Закрытие браузера после каждой итерации
 
   def tearDown(self):
-    print('tearDown')
+    print('tearDown\n')
     # self.driver.close()
   
 
@@ -173,6 +173,12 @@ class Registration(unittest.TestCase):
     self.pass_field = driver.find_element(By.NAME, "password")
     self.pass_repeat = driver.find_element(By.NAME, "passwordRepeat")
     self.submit_btn = driver.find_element(By.CSS_SELECTOR, "form [type=submit]")
+
+  @classmethod
+  def setUpClass(self):
+    print('Тест-Сьют№2: Регистрация \n')
+    self.driver = driver
+    self.driver.get('http://localhost:3000/signin')
 
 
   def setUp(self):
