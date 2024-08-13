@@ -14,7 +14,6 @@ from selenium.webdriver.support import expected_conditions as EC
 driver = webdriver.Chrome()
 wait = WebDriverWait(driver, 3)
 
-print("#################Тест-Сьют 1: Проверка формы 'Sign In'#################")
 
 class Authorization(unittest.TestCase):
 
@@ -154,9 +153,6 @@ class Authorization(unittest.TestCase):
 
 
 
-print('#################Тест-Сьют 2: Проверка формы "Sign Up"#################')
-
-
 
 class Registration(unittest.TestCase):
 
@@ -176,7 +172,7 @@ class Registration(unittest.TestCase):
 
   @classmethod
   def setUpClass(self):
-    print('Тест-Сьют№2: Регистрация \n')
+    print('\n\nТест-Сьют№2: Регистрация \n')
     self.driver = driver
     self.driver.get('http://localhost:3000/signin')
 
@@ -270,10 +266,101 @@ class Registration(unittest.TestCase):
     
   
   
-  
+class BookFavorite(unittest.TestCase):
+
+    
+
+    def _prepare_auth_form_fields(self):
+     self.email_field = driver.find_element(By.NAME, "email") 
+     self.pass_field = driver.find_element(By.NAME, "password")
+     self.submit_btn = driver.find_element(By.CSS_SELECTOR, "form [type=submit]")
+
+    def _fill_auth_form_fields(self, email, password):
+     self.email_field.send_keys(email)
+     self.pass_field.send_keys(password)
+
+    @classmethod
+    def setUpClass(self):
+      print('\n\n Тест-Сьют №3: Функционал сайта\n')
+      self.driver = driver
+      self.driver.get('http://localhost:3000/signin')
+
+
+    def setUp(self):
+     print('\n\nsetup')
+     
+     
+
+    def test_adding_a_Favorite_book(self):
+      print('adding_a_Favorite_book')
+      try:
+        wait.until(EC.element_to_be_clickable((By.NAME, "email")))
+        self._prepare_auth_form_fields()
+        self._fill_auth_form_fields("super.neyt@yandex.ru", "180175Ilya")
+        self.submit_btn.click()
+      except:
+        print("The form wasn't initiated properly")
+      try:
+        wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'book__favorite')))
+        self.assertEqual(self.driver.current_url, "http://localhost:3000/?page=1")
+        self.driver.find_element(By.CLASS_NAME, "book__favorite").click()  #Проверка нажатия кнопки Favorite
+      except:
+        print("No books added to Favorite!")
+      self.driver.get("http://localhost:3000/favorites")
+      wait.until(EC.presence_of_element_located((By.CLASS_NAME,"book")))
+      
+     
+    def test_removing_from_favorites(self):
+      print("removing_from_favorites")
+      self.driver.get("http://localhost:3000/favorites")
+      try:
+        wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'book__favorite'))).click()
+      except:
+        print("Book was not added!")
+      try:
+        wait.until_not(EC.presence_of_element_located((By.CLASS_NAME, 'book')))
+      except:
+        print("The book is still here")
+      self.driver.refresh
+      try:
+        wait.until_not(EC.presence_of_element_located((By.CLASS_NAME, 'book')))
+      except:
+        print("The book is still here")
+      with self.assertRaises(NoSuchElementException):
+        self.driver.find_element(By.CLASS_NAME,"book")
+      
+
+
+    def test_zlEAVE_A_COMMENT(self):
+      print("LEAVE_A_COMMENT")
+      self.driver.get("http://localhost:3000/?page=1")
+      try:
+        wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "book__link"))).click()
+      except:
+        print("Unable to find any books!")
+      try:
+        wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "textarea"))).send_keys(rand.generate_random_wrong_email(80))
+        self.driver.find_element(By.CSS_SELECTOR, "form [type=submit]").click()
+      except:
+        print("Unable to leave a comment!")
+      self.driver.find_element(By.CLASS_NAME, "header__catalog-link").click()
+
+
+    def tearDown(self):
+     print("tearDown")  
   #################
 
+tc1 = unittest.TestLoader().loadTestsFromTestCase(Authorization)
+tc2 = unittest.TestLoader().loadTestsFromTestCase(Registration)
+tc3 = unittest.TestLoader().loadTestsFromTestCase(BookFavorite)
 
+signInSuite = unittest.TestSuite(tc1)
+signUpSuite = unittest.TestSuite(tc2)
+favBook = unittest.TestSuite(tc3)
 
-if __name__ == "__main__":
-  unittest.main()
+unittest.TextTestRunner(verbosity=2).run(signInSuite)
+unittest.TextTestRunner(verbosity=2).run(signUpSuite)
+unittest.TextTestRunner(verbosity=2).run(favBook)
+
+# if __name__ == "__main__":
+#   unittest.main()
