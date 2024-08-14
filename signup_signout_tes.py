@@ -1,6 +1,6 @@
 import unittest
 from lib2to3.pgen2 import driver
-from selenium import webdriver
+from seleniumwire import webdriver 
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
@@ -14,7 +14,7 @@ PAGE_HOME_URL = f'{CONFIG_BASE_URL}/?page=1'
 PAGE_FAVORITES_URL = f'{CONFIG_BASE_URL}/favorites'
 
 driver = webdriver.Chrome()
-wait = WebDriverWait(driver, 3)
+wait = WebDriverWait(driver, 5)
 
 
 # @unittest.skip('')
@@ -22,6 +22,8 @@ class Authorization(unittest.TestCase):
     '''
     This test suite makes some tests on an authorization
     '''
+    
+      
 
     def _fill_form_fields(self, email, password):
         self.email_field.clear()
@@ -52,18 +54,25 @@ class Authorization(unittest.TestCase):
             self._prepare_form_fields()
         except:
             print("The form wasn't initiated properly")
-
     # Проверка успешной авторизации
 
     def test_auth(self):
         print('test_auth')
         self._fill_form_fields("super.neyt@yandex.ru", "180175Ilya")
         self.submit_btn.click()
+        print("Auth:",self.driver.last_request.response)
+        # for request in self.driver.requests:
+        #     if request.response:
+        #         print("\n",
+        #         request.url,
+        #         request.response.status_code,
+        # )
         try:
             wait.until(EC.element_to_be_clickable(
                 (By.CLASS_NAME, "header__catalog-link")))
             self.driver.find_element(
                 By.CLASS_NAME, "header__catalog-link").click()
+            print("Log:",self.driver.last_request.response)
             self.assertEqual(self.driver.current_url, PAGE_HOME_URL)
         except:
             print("TimeOut")
@@ -75,6 +84,7 @@ class Authorization(unittest.TestCase):
         print('test_badAuth_eMail')
         self._fill_form_fields("super.neyt@", "180175Ilya")
         self.submit_btn.click()
+        print("Auth:",self.driver.last_request.response)
         try:
             wait.until(EC.presence_of_element_located(
                 (By.CLASS_NAME, "error")))
@@ -90,6 +100,7 @@ class Authorization(unittest.TestCase):
         generated_email = rand.generate_random_email(5)
         self._fill_form_fields(generated_email, "180175Ilya")
         self.submit_btn.click()
+        print("Auth:",self.driver.last_request.response)
         try:
             wait.until(EC.presence_of_element_located(
                 (By.CLASS_NAME, "error")))
@@ -104,6 +115,7 @@ class Authorization(unittest.TestCase):
         print('test_badAuth_pass')
         self._fill_form_fields("super.neyt@yandex.ru", "180175Ily")
         self.submit_btn.click()
+        print("Auth:",self.driver.last_request.response)
         try:
             wait.until(EC.presence_of_element_located(
                 (By.CLASS_NAME, "error")))
@@ -118,6 +130,7 @@ class Authorization(unittest.TestCase):
         print("using_space_in_pass_field")
         self._fill_form_fields("super.neyt@yandex.ru", " 180175Ilya")
         self.submit_btn.click()
+        print("Auth:",self.driver.last_request.response)
         self.assertNotEqual(self.driver.current_url, PAGE_HOME_URL)
 
     # Проверка сохранения данных после перезагрузки страницы
@@ -126,11 +139,13 @@ class Authorization(unittest.TestCase):
         print("test_refreshPage_withData")
         self._fill_form_fields("super.neyt@yandex.ru", "180175Ilya")
         self.driver.refresh()
+        print("Auth init:",self.driver.last_request.response)
         try:
             wait.until(EC.presence_of_element_located(
                 (By.CLASS_NAME, "form-wrapper")))
             self._prepare_form_fields()
             self.submit_btn.click()
+            print("Auth:",self.driver.last_request.response)
         except:
             print("The form wasn't initiated properly")
         try:
@@ -191,9 +206,11 @@ class Registration(unittest.TestCase):
         self._fill_reg_form_fields(
             rand.generate_random_email(6), "180175Ilya", "180175Ilya")
         self.submit_btn.click()
+        print("Registration:",self.driver.last_request.response)
         try:
             wait.until(EC.element_to_be_clickable(
                 (By.CLASS_NAME, "header__catalog-link"))).click()
+            print("Log-Out:",self.driver.last_request.response)
             self.assertEqual(self.driver.current_url, PAGE_HOME_URL)
         except:
             print("TimeOut")
@@ -205,6 +222,7 @@ class Registration(unittest.TestCase):
         self._fill_reg_form_fields(
             rand.generate_random_wrong_email(10), '180175Ilya', "180175Ilya")
         self.submit_btn.click()
+        print("Registation",self.driver.last_request.response)
         try:
             wait.until(EC.presence_of_element_located(
                 (By.CLASS_NAME, "error")))
@@ -220,6 +238,7 @@ class Registration(unittest.TestCase):
         self._fill_reg_form_fields(
             rand.generate_random_email(7), ' 180175Ilya', " 180175Ilya")
         self.submit_btn.click()
+        print("Registration:",self.driver.last_request.response)
         self.assertNotEqual(self.driver.current_url, PAGE_HOME_URL)
 
         # Проверка валидации поля "Подтверждение пароля" /Использовать другой пароль
@@ -229,6 +248,7 @@ class Registration(unittest.TestCase):
         self._fill_reg_form_fields(
             rand.generate_random_email(8), '180175Ilya', "180175Ily")
         self.submit_btn.click()
+        print("Registration:",self.driver.last_request.response)
         try:
             wait.until(EC.presence_of_element_located(
                 (By.CLASS_NAME, "error")))
@@ -249,6 +269,7 @@ class Registration(unittest.TestCase):
                 (By.CLASS_NAME, "form-wrapper")))
             self._prepare_reg_form_fields()
             self.submit_btn.click()
+            print("Registration:",self.driver.last_request.response)
         except:
             print("The form wasn't initiated properly")
         try:
@@ -291,6 +312,7 @@ class BookFavorite(unittest.TestCase):
             self._prepare_auth_form_fields()
             self._fill_auth_form_fields("super.neyt@yandex.ru", "180175Ilya")
             self.submit_btn.click()
+            print("Logging in:",self.driver.last_request.response)
         except:
             print("The form wasn't initiated properly")
         try:
@@ -299,6 +321,7 @@ class BookFavorite(unittest.TestCase):
             self.assertEqual(self.driver.current_url, PAGE_HOME_URL)
             # Проверка нажатия кнопки Favorite
             self.driver.find_element(By.CLASS_NAME, "book__favorite").click()
+            print("Adding to Favorite:", self.driver.last_request.response)
         except:
             print("No books added to Favorite!")
         self.driver.get(PAGE_FAVORITES_URL)
@@ -313,6 +336,7 @@ class BookFavorite(unittest.TestCase):
         try:
             wait.until(EC.element_to_be_clickable(
                 (By.CLASS_NAME, 'book__favorite'))).click()
+            print("Removing from Favorites:",self.driver.last_request.response)
         except:
             print("Book was not added!")
         try:
@@ -335,6 +359,7 @@ class BookFavorite(unittest.TestCase):
         try:
             wait.until(EC.element_to_be_clickable(
                 (By.CLASS_NAME, "book__link"))).click()
+            print('Open a books page:',self.driver.last_request.response)
         except:
             print("Unable to find any books!")
         try:
@@ -342,9 +367,11 @@ class BookFavorite(unittest.TestCase):
                 rand.generate_random_wrong_email(80))
             self.driver.find_element(
                 By.CSS_SELECTOR, "form [type=submit]").click()
+            print('New Comment:',self.driver.last_request.response)
         except:
             print("Unable to leave a comment!")
         self.driver.find_element(By.CLASS_NAME, "header__catalog-link").click()
+        print('Log-out:',self.driver.last_request.response)
 
     def tearDown(self):
         print("tearDown")
