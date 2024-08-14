@@ -75,8 +75,8 @@ class Authorization(unittest.TestCase):
         try:
             wait.until(EC.presence_of_element_located(
                 (By.CLASS_NAME, "error")))
-            usrErr = self.driver.find_element(By.CLASS_NAME, "error")
-            self.assertEqual(usrErr.text, "Invalid email address")
+            usr_err = self.driver.find_element(By.CLASS_NAME, "error")
+            self.assertEqual(usr_err.text, "Invalid email address")
         except:
             print("No errors found!")
 
@@ -90,22 +90,22 @@ class Authorization(unittest.TestCase):
         try:
             wait.until(EC.presence_of_element_located(
                 (By.CLASS_NAME, "error")))
-            usrErr = self.driver.find_element(By.CLASS_NAME, "error")
-            self.assertEqual(usrErr.text, "User with this email not found")
+            usr_err = self.driver.find_element(By.CLASS_NAME, "error")
+            self.assertEqual(usr_err.text, "User with this email not found")
         except:
             print("No errors found!")
 
     # Проверка валидации поля "Пароль"
 
-    def test_badAuth_pass(self):
+    def test_bad_auth_pass(self):
         print('test_badAuth_pass')
         self._fill_form_fields("super.neyt@yandex.ru", "180175Ily")
         self.submit_btn.click()
         try:
             wait.until(EC.presence_of_element_located(
                 (By.CLASS_NAME, "error")))
-            usrErr = self.driver.find_element(By.CLASS_NAME, "error")
-            self.assertEqual(usrErr.text, "Wrong password")
+            usr_err = self.driver.find_element(By.CLASS_NAME, "error")
+            self.assertEqual(usr_err.text, "Wrong password")
         except:
             print("No errors found!")
 
@@ -133,8 +133,8 @@ class Authorization(unittest.TestCase):
         try:
             wait.until(EC.presence_of_element_located(
                 (By.CLASS_NAME, "error")))
-            usrErr = self.driver.find_element(By.CLASS_NAME, "error")
-            self.assertEqual(usrErr.text, "Required")
+            usr_err = self.driver.find_element(By.CLASS_NAME, "error")
+            self.assertEqual(usr_err.text, "Required")
         except:
             print("No errors found!")
 
@@ -150,11 +150,11 @@ class Registration(unittest.TestCase):
     '''
     '''
 
-    def _fill_reg_form_fields(self, email, password, passwordRep):
+    def _fill_reg_form_fields(self, email, password, password_rep):
         self.email_field.clear()
         self.email_field.send_keys(email)
         self.pass_field.send_keys(password)
-        self.pass_repeat.send_keys(passwordRep)
+        self.pass_repeat.send_keys(password_rep)
 
     def _prepare_reg_form_fields(self):
         self.email_field = driver.find_element(By.NAME, "email")
@@ -205,8 +205,8 @@ class Registration(unittest.TestCase):
         try:
             wait.until(EC.presence_of_element_located(
                 (By.CLASS_NAME, "error")))
-            usrErr = self.driver.find_element(By.CLASS_NAME, "error")
-            self.assertEqual(usrErr.text, "Invalid email address")
+            usr_err = self.driver.find_element(By.CLASS_NAME, "error")
+            self.assertEqual(usr_err.text, "Invalid email address")
         except:
             print("No errors found!")
 
@@ -229,8 +229,8 @@ class Registration(unittest.TestCase):
         try:
             wait.until(EC.presence_of_element_located(
                 (By.CLASS_NAME, "error")))
-            usrErr = self.driver.find_element(By.CLASS_NAME, "error")
-            self.assertEqual(usrErr.text, "Both passwords need to be the same")
+            usr_err = self.driver.find_element(By.CLASS_NAME, "error")
+            self.assertEqual(usr_err.text, "Both passwords need to be the same")
         except:
             print("No errors found!")
 
@@ -251,8 +251,8 @@ class Registration(unittest.TestCase):
         try:
             wait.until(EC.presence_of_element_located(
                 (By.CLASS_NAME, "error")))
-            usrErr = self.driver.find_element(By.CLASS_NAME, "error")
-            self.assertEqual(usrErr.text, "Required")
+            usr_err = self.driver.find_element(By.CLASS_NAME, "error")
+            self.assertEqual(usr_err.text, "Required")
         except:
             print("No errors found!")
 
