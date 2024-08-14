@@ -1,4 +1,3 @@
-import rand
 import unittest
 from lib2to3.pgen2 import driver
 from selenium import webdriver
@@ -6,6 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import rand
 
 CONFIG_BASE_URL = 'http://localhost:3000'
 PAGE_SIGNIN_URL = f'{CONFIG_BASE_URL}/signin'
@@ -19,6 +19,9 @@ wait = WebDriverWait(driver, 3)
 
 # @unittest.skip('')
 class Authorization(unittest.TestCase):
+    '''
+    This test suite makes some tests on an authorization
+    '''
 
     def _fill_form_fields(self, email, password):
         self.email_field.clear()
@@ -326,7 +329,7 @@ class BookFavorite(unittest.TestCase):
         with self.assertRaises(NoSuchElementException):
             self.driver.find_element(By.CLASS_NAME, "book")
 
-    def test_zlEAVE_A_COMMENT(self):
+    def test_zleave_a_comment(self):
         print("LEAVE_A_COMMENT")
         self.driver.get(PAGE_HOME_URL)
         try:
