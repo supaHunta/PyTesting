@@ -14,13 +14,8 @@ BASE_API_BOOK_FAV = f'{BASE_API_URL}/book/add-favorites'
 BASE_API_BOOK_REM_FAV = f'{BASE_API_URL}/book/remove-favorites'
 BASE_API_CHECK_TOKEN = f'{BASE_API_URL}/auth/check-token'
 base_api_user = None
-# = f'{BASE_API_URL}/user/1'
 def get_user_url(x): return f'{BASE_API_URL}/user/{1}'
-# def set_user_url(id):
-#     BASE_API_USER = f'{BASE_API_URL}/user/{id}'
 
-# def setUp():
-#     print("setUp")
 
 
 def test_01_registration():
