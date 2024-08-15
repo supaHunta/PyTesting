@@ -6,11 +6,13 @@ import rand
 token = None
 refreshToken = None
 user_id = None
+favorites = []
 
 BASE_API_URL = "http://localhost:4000"
 BASE_API_SIGNIN = f'{BASE_API_URL}/auth/signin'
 BASE_API_SIGNUP = f'{BASE_API_URL}/auth/signup'
-BASE_API_BOOK_FAV = f'{BASE_API_URL}/book/add-favorites'
+BASE_API_BOOK_GET_FAV_URL = f'{BASE_API_URL}/book/favorites'
+BASE_API_BOOK_ADD_FAV_URL = f'{BASE_API_URL}/book/add-favorites'
 BASE_API_BOOK_REM_FAV = f'{BASE_API_URL}/book/remove-favorites'
 BASE_API_CHECK_TOKEN = f'{BASE_API_URL}/auth/check-token'
 base_api_user = None
@@ -78,12 +80,29 @@ def test_04_invalid_authorization():
 
 def test_05_add_favorites():
     headers = {'Authorization': f'Bearer {token}', "Connection": 'keep-alive'}
+    response = requests.get(BASE_API_BOOK_GET_FAV_URL, headers=headers)
+    response_json = response.json()
+    print('\n->> resp1', response_json)
     body = {'bookId': 1}
+    for item in response_json:
+        if body.get('bookId') == item.get('bookId'):
+            raise Exception('Book already exists')
     response = requests.post(
-        BASE_API_BOOK_FAV, json=body, headers=headers)
+        BASE_API_BOOK_ADD_FAV_URL, json=body, headers=headers)
     requests.post(
         'http://localhost:4000/auth/check-token', json={'refreshToken': refreshToken})
     assert response.status_code == 200
+
+    response = requests.get(BASE_API_BOOK_GET_FAV_URL, headers=headers)
+    response_json = response.json()
+    print('\n->> resp2', response_json)
+    
+    was_book_found = False
+    for item in response_json:
+        if body.get('bookId') == item.get('bookId'):
+            was_book_found = True
+
+    assert was_book_found == True
     print('\n\ntest_05_add_favorites', response.text, '\n')
     # print(token_response.text)
 
@@ -110,3 +129,14 @@ def test_07_rename_user():
     assert response_json.get("user", {}).get("name") == name
     print('\ntest_07_rename_user', response.text)
     print(f"User {user_id} is now {name}")
+
+
+def test_08_change_profile_image():
+    response = requests.get('http://localhost:4000/user/1', headers = {'Authorization': f'Bearer {token}'})
+    photo_response = response.json()
+    current_result = photo_response.get('data',{}).get("user",{}).get('avatar')
+    print(current_result)
+    response = requests.get('http://localhost:4000/user/1', headers = {'Authorization': f'Bearer {token}'})
+    photo_response = response.json()
+    second_result = photo_response.get('data',{}).get("user",{}).get('avatar')
+    print(second_result)

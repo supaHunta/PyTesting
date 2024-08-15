@@ -6,18 +6,25 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import random_file_generator as RFG
+from time import sleep
+import requests
+import API_test as API
 
 CONFIG_BASE_URL = 'http://localhost:3000'
 PAGE_SIGNIN_URL = f'{CONFIG_BASE_URL}/signin'
 PAGE_SIGNUP_URL = f'{CONFIG_BASE_URL}/signup'
 PAGE_HOME_URL = f'{CONFIG_BASE_URL}/?page=1'
 PAGE_FAVORITES_URL = f'{CONFIG_BASE_URL}/favorites'
+USER_PAGE_URL = f'{CONFIG_BASE_URL}/me'
+
+
 
 driver = webdriver.Chrome()
 wait = WebDriverWait(driver, 3)
 
 
-# @unittest.skip('')
+@unittest.skip('')
 class Authorization(unittest.TestCase):
 
     def _fill_form_fields(self, email, password):
@@ -145,7 +152,7 @@ class Authorization(unittest.TestCase):
         # self.driver.close()
 
 
-# @unittest.skip('')
+@unittest.skip('')
 class Registration(unittest.TestCase):
     '''
     '''
@@ -262,6 +269,10 @@ class Registration(unittest.TestCase):
 
 class BookFavorite(unittest.TestCase):
 
+
+    token = None
+    refresh_token = None
+
     def _prepare_auth_form_fields(self):
         self.email_field = driver.find_element(By.NAME, "email")
         self.pass_field = driver.find_element(By.NAME, "password")
@@ -343,6 +354,20 @@ class BookFavorite(unittest.TestCase):
             print("Unable to leave a comment!")
         self.driver.find_element(By.CLASS_NAME, "header__catalog-link").click()
 
+    
+    def test_uploading_a_photo(self):
+        self.driver.get(USER_PAGE_URL)
+        try:
+            sabaka = wait.until(EC.element_to_be_clickable((By.ID, 'ava')))
+            sleep(3)
+            sabaka.send_keys(RFG.get_a_random_file())
+            sleep(3)
+        except:
+            print('pizdec')
+        
+
+    
+    
     def tearDown(self):
         print("tearDown")
     #################
