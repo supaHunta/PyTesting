@@ -56,6 +56,7 @@ def test_02_authorization():
     token = response_json["token"]
     refreshToken = response_json['refreshToken']
     print('\n\ntest_02_authorization', response.text, "\n")
+    return token
 
 
 def test_03_invalid_registration():
